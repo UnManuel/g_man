@@ -25,7 +25,7 @@ namespace GMan {
 /*
 		Start
 
-		PlayerPrefs and checked and the component is updated accordingly.
+		PlayerPrefs are checked and the component is updated accordingly.
 */
 		void Start() {
 			
