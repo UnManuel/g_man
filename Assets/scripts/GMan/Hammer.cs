@@ -32,9 +32,9 @@ namespace GMan {
 
 		int state;                         		// Current state
 
-		float time = 0, maxTime;           		// State clocks
+		float time = 0, maxTime;           		// State clock
 
-		Vector3 startPosition, endPosition;		// Endpoins of the flying hammer
+		Vector3 startPosition, endPosition;		// Endpoints of the flying hammer
 /*
 		OnEnable
 
