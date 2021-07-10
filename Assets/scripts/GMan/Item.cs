@@ -57,10 +57,8 @@ namespace GMan {
 		The item triggers its designated event and vanishes.
 */
 		void OnTriggerEnter(Collider c) {
-			if(c.GetComponent<Avatar>() != null) {
-				gameObject.SetActive(false);
+			if(c.GetComponent<Avatar>() != null)
 				OnGet?.Invoke();
-			}
 		}
 	}
 }

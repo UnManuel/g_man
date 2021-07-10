@@ -36,6 +36,7 @@ namespace GMan {
 		- item(Item): the item to be respawned.
 */
 		public void RespawnItem(Item item) {
+			gameObject.SetActive(false);
 			StartCoroutine(Respawn(item));
 		}
 /*

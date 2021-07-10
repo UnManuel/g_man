@@ -42,15 +42,17 @@ namespace GMan {
 		Turns off the current weapon and equips the one with the provided index.
 
 		Params
-		- weaponIndex(int): The index inside the weapons array.
+		- weaponIndex(int): the index inside the weapons array.
 */
 		public void ChangeWeapon(int weaponIndex) {
-			
-			if(currentWeaponIndex != -1)
-				weapons[currentWeaponIndex].gameObject.SetActive(false);
-			
-			currentWeaponIndex = weaponIndex;
-			weapons[weaponIndex].gameObject.SetActive(true);
+			if(weaponIndex != currentWeaponIndex) {
+
+				if(currentWeaponIndex != -1)
+					weapons[currentWeaponIndex].gameObject.SetActive(false);
+				
+				currentWeaponIndex = weaponIndex;
+				weapons[weaponIndex].gameObject.SetActive(true);
+			}
 		}
 	}
 }

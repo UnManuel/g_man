@@ -41,7 +41,7 @@ namespace GMan {
 		The hammer is prepared to be launched forwards.
 */
 		void OnEnable() {
-			
+
 			state = STATE_ATTACK;
 			
 			time = 0;
@@ -63,42 +63,36 @@ namespace GMan {
 
 				case STATE_ATTACK:
 
-					if(time < maxTime) {
+					time += Time.fixedDeltaTime;
 
-						time += Time.fixedDeltaTime;
+					if(time > maxTime)
+						time = maxTime;
 
-						if(time > maxTime)
-							time = maxTime;
+					anchor.transform.position = Vector3.Lerp(startPosition, endPosition, time / maxTime);
+					inner.transform.localEulerAngles = new Vector3(time / maxTime * 1080f + 90f, 0, 0);
 
-						anchor.transform.position = Vector3.Lerp(startPosition, endPosition, time / maxTime);
-						inner.transform.localEulerAngles = new Vector3(time / maxTime * 1080f + 90f, 0, 0);
+					if(time == maxTime) {
 
-						if(time == maxTime) {
+						time = 0;
+						maxTime = breakTime;
 
-							time = 0;
-							maxTime = breakTime;
-
-							state = STATE_BREAK;
-						}
+						state = STATE_BREAK;
 					}
 
 					break;
 
 				case STATE_BREAK:
 
-					if(time < maxTime) {
+					time += Time.fixedDeltaTime;
 
-						time += Time.fixedDeltaTime;
+					if(time > maxTime) {
 
-						if(time > maxTime) {
+						startPosition = anchor.transform.position;
 
-							startPosition = anchor.transform.position;
-
-							time = 0;
-							maxTime = returnTime;
-							
-							state = STATE_RETURN;
-						}
+						time = 0;
+						maxTime = returnTime;
+						
+						state = STATE_RETURN;
 					}
 
 					transform.LookAt(Camera.main.transform.position);
@@ -107,38 +101,35 @@ namespace GMan {
 
 				case STATE_RETURN:
 
-					if(time < maxTime) {
+					time += Time.fixedDeltaTime;
 
-						time += Time.fixedDeltaTime;
+					if(time > maxTime)
+						time = maxTime;
+					
+					endPosition = weapon.transform.position;
 
-						if(time > maxTime)
-							time = maxTime;
-						
-						endPosition = weapon.transform.position;
+					anchor.transform.position = Vector3.Lerp(startPosition, endPosition, ease.Evaluate(time / maxTime));
 
-						anchor.transform.position = Vector3.Lerp(startPosition, endPosition, ease.Evaluate(time / maxTime));
+					transform.LookAt(Camera.main.transform.position);
 
-						transform.LookAt(Camera.main.transform.position);
+					if(time == maxTime) {
+					
+						time = 0;
+						maxTime = restTime;
 
-						if(time == maxTime) {
-						
-							time = 0;
-							maxTime = restTime;
-
-							state = STATE_REST;
-						}
+						state = STATE_REST;
 					}
 
 					break;
 
 				default:
-							
-					anchor.transform.position = weapon.transform.position;
 
 					time += Time.fixedDeltaTime;
 
 					if(time > maxTime)
 						weapon.StoreBullet();
+							
+					anchor.transform.position = weapon.transform.position;
 
 					transform.LookAt(Camera.main.transform.position);
 
