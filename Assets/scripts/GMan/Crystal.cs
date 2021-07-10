@@ -5,19 +5,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GMan {
+/*
+	Crystal
 
+	A crystal that attracts nearby satellite objects.
+*/
 	public class Crystal : MonoBehaviour {
 
-		public Orbit[] orbits;
+		public Orbit[] orbits;    	// Three paths shaped like an atom
 
-		int currentOrbitIndex = 0;
+		int currentOrbitIndex = 0;	// The orbit being evaluated to add a satellite
+/*
+		OnTriggerStay
 
-		void OnDisable() {
-			for(int i = 0; i < orbits.Length; ++i)
-				orbits[i].ReleaseSatellites();
-		}
-
-		void OnTriggerEnter(Collider c) {
+		Checks if the satellite inside of the crystal's collider
+		can be added to one of the orbits (current capacity is 24).
+*/
+		void OnTriggerStay(Collider c) {
 
 			Satellite sat = c.GetComponent<Satellite>();
 

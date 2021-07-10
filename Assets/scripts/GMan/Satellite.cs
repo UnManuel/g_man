@@ -4,9 +4,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Satellite : MonoBehaviour {
+namespace GMan {
+/*
+	Satellite
 
-	public Collider box;
-	public Rigidbody body;
-	public Anchor anchor;
+	A game object that is anchored to another in order to follow set paths.
+*/
+	public class Satellite : MonoBehaviour {
+
+		public Collider box;  	// Hitbox of the satellite
+		public Rigidbody body;	// Rigidbody whose velocity is course-corrected
+		public Anchor anchor; 	// Reference to the owning anchor
+	}
 }

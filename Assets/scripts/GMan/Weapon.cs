@@ -5,16 +5,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GMan {
+/*
+	Weapon
 
+	A general-purpose weapon which acts as an abstraction of a gun.
+	Works with different configurations provided by a setup file. 
+*/
 	public class Weapon : MonoBehaviour {
 
-		public WeaponSetup setup;
-		public GameObject baseBullet;
+		public WeaponSetup setup;        	// Scriptable object file
+		public GameObject baseBullet;    	// Brandished by the weapon
 
-		int bulletCount;
-		float cooldown;
-		Queue<GameObject> pool, deadPool;
+		int bulletCount;                 	// Capacity of the weapon
+		float cooldown;                  	// Time between shots
+		Queue<GameObject> pool, deadPool;	// Pools to handle bullet clones
+/*
+		Start
 
+		Bullets are duplicated from the base and stored for later use.
+*/
 		void Start() {
 			if(setup.bucketSize > 0) {
 
@@ -27,11 +36,21 @@ namespace GMan {
 					deadPool.Enqueue(Instantiate(baseBullet, baseBullet.transform.parent));
 			}
 		}
+/*
+		OnEnable
 
+		Weapon is being readied to shoot again.
+*/
 		void OnEnable() {
 			bulletCount = setup.bulletCount;
+			baseBullet.SetActive(false);
 		}
+/*
+		Update
 
+		A barrage of bullets is released if available. If the bullet pool
+		is empty, it uses the base bullet as a single weapon instead.
+*/
 		void Update() {
 
 			if(Input.GetMouseButtonDown(0)) {
@@ -60,7 +79,7 @@ namespace GMan {
 					} else {
 						bullet = pool.Dequeue();
 						bullet.transform.position = transform.position;
-						bullet.SendMessage("OnEnable");
+						bullet.SendMessage("OnEnable", null, SendMessageOptions.DontRequireReceiver);
 					}
 
 					pool.Enqueue(bullet);
@@ -75,7 +94,11 @@ namespace GMan {
 			if(Input.GetMouseButtonUp(0) && setup.bucketSize == 0)
 				baseBullet.SetActive(false);
 		}
+/*
+		StoreBullet
 
+		Makes the weapon store a bullet that is already spent.
+*/
 		public void StoreBullet() {
 			if(pool.Count > 0) {
 

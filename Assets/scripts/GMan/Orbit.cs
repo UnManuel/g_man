@@ -5,24 +5,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GMan {
+/*
+	Orbit
 
+	A spline holding several anchors moving through it.
+*/
 	public class Orbit : MonoBehaviour {
 
-		public Spline path;
+		public Spline path;            		// The aforementioned spline
 
-		public Anchor[] anchors;
+		public Anchor[] anchors;       		// The anchors being moved
 
-		public float maxOrbitTime = 10;
+		public float maxOrbitTime = 10;		// Time to complete one full orbit
 
-		float orbitTime = 0;
+		float orbitTime = 0;           		// Current orbit time
 
-		float[] offsets;
+		float[] offsets;               		// Distance between anchors
 
-		int nextAnchorIndex;
+		int nextAnchorIndex;           		// Current free anchor slot
+/*
+		Start
 
-		void OnEnable() {
-		}
-
+		Anchor positions are calculated alongside the path.
+*/
 		void Start() {
 
 			offsets = new float[anchors.Length];
@@ -36,7 +41,25 @@ namespace GMan {
 				offset += distance;
 			}
 		}
+/*
+		OnDisable
 
+		Anchor contents are released.
+*/
+		void OnDisable() {
+
+			for(int i = 0; i < nextAnchorIndex; ++i) {
+				anchors[i].target.anchor = null;
+				anchors[i].target = null;
+			}
+
+			nextAnchorIndex = 0;
+		}
+/*
+		FixedUpdate
+
+		Anchors are updated inside of the spline.
+*/
 		void FixedUpdate() {
 
 			orbitTime += Time.fixedDeltaTime;
@@ -58,20 +81,20 @@ namespace GMan {
 				iTween.PutOnPath(anchors[i].gameObject, path.controlPoints, offset);
 			}
 		}
+/*
+		Catch
 
+		A new satellite is added to the orbit if there is a slot available.
+
+		Params
+		- sat(Satellite): The satellite being evaluated for admission.
+*/
 		public void Catch(Satellite sat) {
 			if(nextAnchorIndex < anchors.Length) {
-				anchors[nextAnchorIndex].target = sat;	
+				sat.anchor = anchors[nextAnchorIndex];
+				anchors[nextAnchorIndex].target = sat;
 				++nextAnchorIndex;
 			}
-		}
-
-		public void ReleaseSatellites() {
-
-			for(int i = 0; i < nextAnchorIndex; ++i)
-				anchors[i].target = null;
-
-			nextAnchorIndex = 0;
 		}
 	}
 }

@@ -5,13 +5,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GMan {
+/*
+	Gameplay
 
+	Main component of the gameplay scene.
+*/
 	public class Gameplay : MonoBehaviour {
 
-		public Material skybox;
+		public Material skybox;      	// Skybox used by this scene
 
-		public Animator avatarSample;
+		public Animator avatarSample;	// Animated preview
+/*
+		Start
 
+		UI is updated with the loop data on PlayerPrefs.
+*/
 		void Start() {
 
 			RenderSettings.skybox = skybox;
@@ -19,11 +27,25 @@ namespace GMan {
 			if(PlayerPrefs.HasKey("loop_name"))
 				avatarSample.Play(PlayerPrefs.GetString("loop_name"));
 		}
+/*
+		RespawnItem
 
+		Makes an item reappear.
+
+		Params
+		- item(Item): the item to be respawned.
+*/
 		public void RespawnItem(Item item) {
 			StartCoroutine(Respawn(item));
 		}
+/*
+		Respawn
 
+		Makes an item reappear after 3 seconds.
+
+		Params
+		- item(Item): the item to be respawned.
+*/
 		IEnumerator Respawn(Item item) {
 
 			yield return new WaitForSeconds(3);

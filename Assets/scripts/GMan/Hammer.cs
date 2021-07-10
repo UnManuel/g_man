@@ -5,132 +5,145 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GMan {
+/*
+	Hammer
 
+	It works just like Thor's Mjolnir. Nuff Said!
+*/
 	public class Hammer : MonoBehaviour {
 
-		public Weapon weapon;
-		public GameObject inner;
-		public Anchor anchor;
+		const int STATE_ATTACK = 0;        		// Hammer is moving forward
+		const int STATE_BREAK = 1;         		// Hammer waits before returning
+		const int STATE_RETURN = 2;        		// Hammer is returning
+		const int STATE_REST = 3;          		// Hammer rests before vanishing
 
-		const int STATE_ATTACK = 0;
-		const int STATE_BREAK = 1;
-		const int STATE_RETURN = 2;
-		const int STATE_REST = 3;
+		public Weapon weapon;              		// Owning weapon
+		public GameObject inner;           		// The hammer object being launched
+		public Anchor anchor;              		// The anchor followed by the hammer
 
-		public float maxDistance = 10f;
+		public float maxDistance = 10f;    		// As far as the hammer goes
 
-		public float attackTime = 0.5f;
-		public float breakTime = 0.3f;
-		public float returnTime = 0.4f;
-		public float restTime = 0.5f;
+		public float attackTime = 0.5f;    		// Duration of attack state
+		public float breakTime = 0.3f;     		// Duration of break state
+		public float returnTime = 0.4f;    		// Duration of returning state
+		public float restTime = 0.5f;      		// Duration of resting state
 
-		public AnimationCurve ease;
+		public AnimationCurve ease;        		// Easing used at return
 
-		int state;
+		int state;                         		// Current state
 
-		float time = 0, maxTime;
+		float time = 0, maxTime;           		// State clocks
 
-		Vector3 startPosition, endPosition;
+		Vector3 startPosition, endPosition;		// Endpoins of the flying hammer
+/*
+		OnEnable
 
-	    void OnEnable() {
-	    	
-	    	state = STATE_ATTACK;
-	    	
-	    	time = 0;
-	    	maxTime = attackTime;
-	    	
-	    	startPosition = transform.position = anchor.transform.position = weapon.transform.position;
-	    	endPosition = startPosition + Camera.main.transform.forward * maxDistance;
+		The hammer is prepared to be launched forwards.
+*/
+		void OnEnable() {
+			
+			state = STATE_ATTACK;
+			
+			time = 0;
+			maxTime = attackTime;
+			
+			startPosition = transform.position = anchor.transform.position = weapon.transform.position;
+			endPosition = startPosition + Camera.main.transform.forward * maxDistance;
 
-	    	transform.LookAt(endPosition);
-	    }
+			transform.LookAt(endPosition);
+		}
+/*
+		FixedUpdate
 
-	    void FixedUpdate() {
+		The core of the state machine. Each state deals with
+		the anchor being moved and the hammer following suit. 
+*/
+		void FixedUpdate() {
 			switch(state) {
 
-	    		case STATE_ATTACK:
+				case STATE_ATTACK:
 
-			    	if(time < maxTime) {
+					if(time < maxTime) {
 
-			    		time += Time.fixedDeltaTime;
+						time += Time.fixedDeltaTime;
 
-			    		if(time > maxTime)
-			    			time = maxTime;
+						if(time > maxTime)
+							time = maxTime;
 
-			    		anchor.transform.position = Vector3.Lerp(startPosition, endPosition, time / maxTime);
-			    		inner.transform.localEulerAngles = new Vector3(time / maxTime * 1080f + 90f, 0, 0);
+						anchor.transform.position = Vector3.Lerp(startPosition, endPosition, time / maxTime);
+						inner.transform.localEulerAngles = new Vector3(time / maxTime * 1080f + 90f, 0, 0);
 
-			    		if(time == maxTime) {
+						if(time == maxTime) {
 
-			    			time = 0;
-			    			maxTime = breakTime;
+							time = 0;
+							maxTime = breakTime;
 
-			    			state = STATE_BREAK;
-			    		}
-			    	}
+							state = STATE_BREAK;
+						}
+					}
 
-			    	break;
+					break;
 
-			    case STATE_BREAK:
+				case STATE_BREAK:
 
-			    	if(time < maxTime) {
+					if(time < maxTime) {
 
-			    		time += Time.fixedDeltaTime;
+						time += Time.fixedDeltaTime;
 
-			    		if(time > maxTime) {
+						if(time > maxTime) {
 
-			    			startPosition = anchor.transform.position;
+							startPosition = anchor.transform.position;
 
-			    			time = 0;
-			    			maxTime = returnTime;
-			    			
-			    			state = STATE_RETURN;
-			    		}
-			    	}
+							time = 0;
+							maxTime = returnTime;
+							
+							state = STATE_RETURN;
+						}
+					}
 
-			    	transform.LookAt(Camera.main.transform.position);
+					transform.LookAt(Camera.main.transform.position);
 
-			    	break;
+					break;
 
-			    case STATE_RETURN:
+				case STATE_RETURN:
 
-			    	if(time < maxTime) {
+					if(time < maxTime) {
 
-			    		time += Time.fixedDeltaTime;
+						time += Time.fixedDeltaTime;
 
-			    		if(time > maxTime)
-			    			time = maxTime;
-			    		
-			    		endPosition = weapon.transform.position;
+						if(time > maxTime)
+							time = maxTime;
+						
+						endPosition = weapon.transform.position;
 
-			    		anchor.transform.position = Vector3.Lerp(startPosition, endPosition, ease.Evaluate(time / maxTime));
+						anchor.transform.position = Vector3.Lerp(startPosition, endPosition, ease.Evaluate(time / maxTime));
 
-			    		transform.LookAt(Camera.main.transform.position);
+						transform.LookAt(Camera.main.transform.position);
 
-			    		if(time == maxTime) {
-			    		
-				    		time = 0;
-				    		maxTime = restTime;
+						if(time == maxTime) {
+						
+							time = 0;
+							maxTime = restTime;
 
-				    		state = STATE_REST;
-				    	}
-			    	}
+							state = STATE_REST;
+						}
+					}
 
-			    	break;
+					break;
 
-			    default:
-				    		
-				    anchor.transform.position = weapon.transform.position;
+				default:
+							
+					anchor.transform.position = weapon.transform.position;
 
-			    	time += Time.fixedDeltaTime;
+					time += Time.fixedDeltaTime;
 
-		    		if(time > maxTime)
-		    			weapon.StoreBullet();
+					if(time > maxTime)
+						weapon.StoreBullet();
 
-			    	transform.LookAt(Camera.main.transform.position);
+					transform.LookAt(Camera.main.transform.position);
 
-			    	break;
-	    	}
-	    }
+					break;
+			}
+		}
 	}
 }
