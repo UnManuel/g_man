@@ -1,7 +1,11 @@
 ﻿// by @unmanuel
 
 using UnityEngine;
+/*
+	WeaponSetup
 
+	Weapon config is stored here.
+*/
 [CreateAssetMenu(fileName = "weapon_setup_", menuName = "Scriptables/WeaponSetup", order = 1)]
 public class WeaponSetup : ScriptableObject {
 	

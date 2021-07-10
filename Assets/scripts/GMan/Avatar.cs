@@ -17,7 +17,7 @@ namespace GMan {
 		public Weapon[] weapons;              	// Available weapons
 
 		public float speed = 10;              	// Movement speed
-		public int currentWeaponIndex = -1;   	// -1 is no weapon is equiped
+		public int currentWeaponIndex = -1;   	// -1 if no weapon is equipped
 /*
 		Start
 
